@@ -1,2 +1,2 @@
-admin, adm1n
-siyabonga, siyam3110
+admin,adm1n
+siyabonga,siyam3110

@@ -2,17 +2,27 @@
 import datetime
 
 #  ==== Login Section ====
-def login(user_data):
+def login(login_database):
     print("Please login. (user or admin)")
+    print(f"This is a list of everyone inside the databsise: {login_database}!")
     while True:
         username = input("Enter username: ")
         password = input("Enter password: ")
-        if username in user_data and user_data[username] == password:
-            print("Login successful!")
-            break
+
+
+        if username in login_database:
+            print("username successful!")
+            if login_database[username] == password:
+                print("password successful!")
+                break
+            else:
+                print("password incorrect")      
         else:
             print("Invalid username or password. Try again")
 
+
+
+    return [username, password]
 # Function to read users from file
 def read_users(filename):
     users = {}
@@ -21,8 +31,13 @@ def read_users(filename):
             for line in file:
                 username, password = line.strip().split(',')
                 users[username] = password
+
+
     except FileNotFoundError:
         print("User file not found.")
+
+    #print(f"Here is all the users {users}")
+    #print(f"Here is all the users {users["siyabonga"]}")  IMPORTANT ON HOW TO GET CORRECT USER
     return users
 
 # Register a new user
@@ -34,7 +49,7 @@ def register_user():
     # Checking passwords match and write to file
     if password == password_confirmation:
         with open('user.txt', 'a') as f:
-            f.write(f"{username}, {password}\n")
+            f.write(f"{username},{password}\n")
         print("User registered successfully!")
     else:
         print("Passwords do not match.")
@@ -53,17 +68,6 @@ def add_task(username):
         file.write(", ".join(task) + "\n")
         print("Task added successfully!")
 
-def validate_user(username, password):
-    with open('user.txt', 'r') as file:
-        users = file.readline()
-
-        # Check if user exits
-        for user in users:
-            name, passw, role = user.strip().split(',')
-            if name == username and passw == password:
-                return role # Return the role of the user
-            return False
-        
 def load_tasks(filename):
     tasks = []
     try:
@@ -74,9 +78,6 @@ def load_tasks(filename):
         print("File not found.")
     return tasks
 
-def view_all(tasks):
-    for idx, task in enumerate(tasks):
-        print(f"{idx + 1}. {tasks}")
 
 # Display menu for non admin menu
 def display_non_admin_menu():
@@ -101,14 +102,22 @@ def display_admin_menu():
 # Main menu interaction
 def main_menu():
    while True:
-    username = read_users('user.txt')
+    print("Hi")
+    login_database = read_users('user.txt') #username assigned once 
+   
+    print(login_database)
     tasks = load_tasks('tasks.txt')
 
-    user_data = view_all(username)
-    username = login(user_data)
-    role = validate_user(username)
+    #removed view all - not useful 
+    
+    logged_in_user = login(login_database) #username assigned twice
+    print(f'This user is logged in: {logged_in_user}')
 
-    if role == 'admin':
+    print(f"Logged in username: {logged_in_user}")
+    #role = validate_user(logged_in_username) dont need to validate role if username is admin 
+
+    if logged_in_user[0] == 'admin':
+        print("Admin is logged in")
         while True:
             display_admin_menu()
             choice = input("Select an option")
